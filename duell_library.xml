@@ -5,6 +5,12 @@
 
     <haxelib name="msignal" version="1.2.2" />
 
+    <platform-config>
+        <ios>
+            <framework name="CoreMotion.framework" />
+        </ios>
+    </platform-config>
+
 <!--     
     <platform-config>
         <documentation>

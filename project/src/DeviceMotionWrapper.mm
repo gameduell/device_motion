@@ -39,7 +39,7 @@
 @end
 
 
-@implementation AppDelegateResponder
+@implementation DeviceMotionWrapper
 
 - (void) startAccelerometerInput:(value)callback
 {
