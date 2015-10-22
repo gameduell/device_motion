@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<library xmlns="duell">
+
+    <ndll name="device_motion" build-file-path="project/Build.xml" bin-path="ndll" />
+
+    <haxelib name="msignal" version="1.2.2" />
+
+<!--     
+    <platform-config>
+        <documentation>
+            <documentation-folder library="ios_appdelegate" path="documentation" />
+        </documentation>
+    </platform-config> 
+-->
+
+</library>

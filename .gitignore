@@ -1,0 +1,5 @@
+tests/Export
+ndll
+project/obj
+.idea/
+*.iml

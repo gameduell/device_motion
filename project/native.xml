@@ -1,0 +1,4 @@
+<xml>
+		<compilerflag value="-I${haxelib:duell_device_motion}/project/include" />
+</xml>
+
