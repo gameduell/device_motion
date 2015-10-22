@@ -24,19 +24,48 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+package device_motion;
 
-#ifndef STATIC_LINK
-#define IMPLEMENT_API
-#endif
+class AccelerometerData
+{
+    public var x (default, null): Float;
+    public var y (default, null): Float;
+    public var z (default, null): Float;
 
-#include <hx/CFFI.h>
+    public var xFiltered (default, null): Float;
+    public var yFiltered (default, null): Float;
+    public var zFiltered (default, null): Float;
 
+    private var filterValue: Float;
 
-@interface DeviceMotionWrapper : NSObject
+    public function new(filterValue: Float = 0.1): Void
+    {
+        this.filterValue = filterValue;
 
-- (void) startAccelerometerInput:(value)callback;
-- (void) stopAccelerometerInput;
+        x = 0;
+        y = 0;
+        z = 0;
 
-@end
+        xFiltered = 0;
+        yFiltered = 0;
+        zFiltered = 0;
+    }
+
+    public function updateData(xRaw: Float, yRaw: Float, zRaw: Float): Void
+    {
+        x = xRaw;
+        y = yRaw;
+        z = zRaw;
+
+        // Use a basic low-pass filter to only keep the gravity in the accelerometer values
+        var factor: Float = filterValue;
+        var inverseFactor: Float = (1.0 - factor);
+        xFiltered = x * factor + xFiltered * inverseFactor;
+        yFiltered = y * factor + yFiltered * inverseFactor;
+        zFiltered = z * factor + zFiltered * inverseFactor;
+
+        xFiltered = Math.min(Math.max(xFiltered, -1.0), 1.0);
+        yFiltered = Math.min(Math.max(yFiltered, -1.0), 1.0);
+        zFiltered = Math.min(Math.max(zFiltered, -1.0), 1.0);
+    }
+}

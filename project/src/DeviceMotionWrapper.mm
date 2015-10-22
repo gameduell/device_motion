@@ -45,8 +45,8 @@
 {
     if (!self.motionManager)
     {
-        self.motionManager = [[CMMotionManager alloc] init];
-        self.motionManager.accelerometerUpdateInterval = 0.1;
+        self.motionManager = [[[CMMotionManager alloc] init] autorelease];
+        self.motionManager.accelerometerUpdateInterval = 1.0/60.0;
     }
 
     _accelerometerCallback = new AutoGCRoot(callback);
@@ -60,9 +60,12 @@
          {
             dispatch_async(dispatch_get_main_queue(), ^
             {
-                val_call1(_accelerometerCallback->get(), alloc_float(accelerometerData.acceleration.x));
+                val_call3(_accelerometerCallback->get(), 
+                    alloc_float(accelerometerData.acceleration.x), 
+                    alloc_float(accelerometerData.acceleration.y), 
+                    alloc_float(accelerometerData.acceleration.z));
 
-                NSLog(@"x %.2f y %.2f z %.2f", accelerometerData.acceleration.x, accelerometerData.acceleration.y, accelerometerData.acceleration.z);
+                // NSLog(@"x %.2f y %.2f z %.2f", accelerometerData.acceleration.x, accelerometerData.acceleration.y, accelerometerData.acceleration.z);
             });
         }];
     }

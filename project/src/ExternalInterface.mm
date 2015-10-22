@@ -29,7 +29,7 @@
 #endif
 
 #include <hx/CFFI.h>
-#include "DeviceMotionWrapper.h"
+#import "DeviceMotionWrapper.h"
 
 
 static DeviceMotionWrapper *wrapper;
@@ -60,11 +60,11 @@ DEFINE_PRIM (device_motion_stop_accelerometer_input, 0);
 
 
 /// OTHER
-extern "C" void device_motion_main ()
+extern "C" void device_motion_main()
 {
 	val_int(0); // Fix Neko init
 }
 DEFINE_ENTRY_POINT (device_motion_main);
 
 
-extern "C" int device_motion_register_prims () { return 0; }
+extern "C" int device_motion_register_prims() { return 0; }
