@@ -38,7 +38,7 @@ class AccelerometerData
 
     private var filterValue: Float;
 
-    public function new(filterValue: Float = 0.1): Void
+    public function new(filterValue: Float): Void
     {
         this.filterValue = filterValue;
 

@@ -36,7 +36,7 @@
 
 @interface DeviceMotionWrapper : NSObject
 
-- (void) startAccelerometerInput:(value)callback;
+- (void) startAccelerometerInputWithFrequency:(value)frequency callback:(value)callback;
 - (void) stopAccelerometerInput;
 
 @end

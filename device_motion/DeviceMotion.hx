@@ -34,27 +34,19 @@ class DeviceMotion
 {
     public var onAccelerometerEvent(default, null): Signal1<AccelerometerData>;
 
-    private var device_motion_start_accelerometer_input = Lib.load ("device_motion", "device_motion_start_accelerometer_input", 1);
+    private var device_motion_start_accelerometer_input = Lib.load ("device_motion", "device_motion_start_accelerometer_input", 2);
     private var device_motion_stop_accelerometer_input = Lib.load ("device_motion", "device_motion_stop_accelerometer_input", 0);
 
     private var data: AccelerometerData = null;
 
-    static private var _instance: DeviceMotion;
-
+    private static var _instance: DeviceMotion;
+    
 	private function new(): Void
     {
-        data = new AccelerometerData();
         onAccelerometerEvent = new Signal1<AccelerometerData>();
     }
 
-    private function onAccelerometerInput(x: Float, y: Float, z: Float): Void
-    {
-        data.updateData(x, y, z);
-
-        onAccelerometerEvent.dispatch(data);
-    }
-
-	static public inline function instance(): DeviceMotion
+    static public inline function instance(): DeviceMotion
 	{
 		if (_instance == null)
 		{
@@ -64,13 +56,27 @@ class DeviceMotion
 		return _instance;
 	}
 
-    public function startAccelerometerInput(): Void
+    public function startAccelerometerInput(filterValue: Float = 0.1, frequency: Float = (1.0/60.0)): Void
     {
-        device_motion_start_accelerometer_input(onAccelerometerInput);
+        if (data == null)
+        {
+            data = new AccelerometerData(filterValue);
+        }
+
+        device_motion_start_accelerometer_input(frequency, onAccelerometerInput);
     }
 
     public function stopAccelerometerInput(): Void
     {
         device_motion_stop_accelerometer_input();
+        onAccelerometerEvent.removeAll();
+        data = null;
+    }
+
+    private function onAccelerometerInput(x: Float, y: Float, z: Float): Void
+    {
+        data.updateData(x, y, z);
+
+        onAccelerometerEvent.dispatch(data);
     }
 }

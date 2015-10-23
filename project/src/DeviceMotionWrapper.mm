@@ -41,12 +41,12 @@
 
 @implementation DeviceMotionWrapper
 
-- (void) startAccelerometerInput:(value)callback
+- (void) startAccelerometerInputWithFrequency:(value)frequency callback:(value)callback
 {
     if (!self.motionManager)
     {
         self.motionManager = [[[CMMotionManager alloc] init] autorelease];
-        self.motionManager.accelerometerUpdateInterval = 1.0/60.0;
+        self.motionManager.accelerometerUpdateInterval = val_float(frequency);
     }
 
     _accelerometerCallback = new AutoGCRoot(callback);
@@ -58,8 +58,18 @@
          startAccelerometerUpdatesToQueue:queue
          withHandler:^(CMAccelerometerData *accelerometerData, NSError *error)
          {
+            if (_accelerometerCallback == NULL)
+            {
+                return;
+            }
+
             dispatch_async(dispatch_get_main_queue(), ^
             {
+                if (_accelerometerCallback == NULL)
+                {
+                    return;
+                }
+                
                 val_call3(_accelerometerCallback->get(), 
                     alloc_float(accelerometerData.acceleration.x), 
                     alloc_float(accelerometerData.acceleration.y), 

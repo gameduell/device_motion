@@ -35,18 +35,18 @@
 static DeviceMotionWrapper *wrapper;
 
 
-static value device_motion_start_accelerometer_input(value callback)
+static value device_motion_start_accelerometer_input(value frequency, value callback)
 {
     if (!wrapper)
     {
         wrapper = [[DeviceMotionWrapper alloc] init];
     }
 
-    [wrapper startAccelerometerInput:callback];
+    [wrapper startAccelerometerInputWithFrequency:frequency callback:callback];
 
 	return alloc_null();
 }
-DEFINE_PRIM (device_motion_start_accelerometer_input, 1);
+DEFINE_PRIM (device_motion_start_accelerometer_input, 2);
 
 
 static value device_motion_stop_accelerometer_input()
