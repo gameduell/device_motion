@@ -51,6 +51,9 @@ class AccelerometerData
         zFiltered = 0;
     }
 
+    /**
+        The expected values `xRaw`, `yRaw` and `zRaw` are in g-forces (https://en.wikipedia.org/wiki/G-force).
+     */
     public function updateData(xRaw: Float, yRaw: Float, zRaw: Float): Void
     {
         x = xRaw;

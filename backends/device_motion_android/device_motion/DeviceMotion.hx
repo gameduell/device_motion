@@ -6,6 +6,8 @@ import msignal.Signal;
 
 class DeviceMotion
 {
+    private static inline var GRAVITATIONAL_PULL_ON_EARTH: Float = 9.81;
+
     private static var initializeNative: Dynamic = null;
     private static var startNative: Dynamic = null;
     private static var stopNative: Dynamic = null;
@@ -74,7 +76,8 @@ class DeviceMotion
     @:keep
     private function onAccelerometerInput(x: Float, y: Float, z: Float): Void
     {
-        data.updateData(x, y, z);
+        // values from Android accelerometer come in m/s2, updateData expects values in g-forces
+        data.updateData(x / GRAVITATIONAL_PULL_ON_EARTH, y / GRAVITATIONAL_PULL_ON_EARTH, z / GRAVITATIONAL_PULL_ON_EARTH);
 
         onAccelerometerEvent.dispatch(data);
     }
