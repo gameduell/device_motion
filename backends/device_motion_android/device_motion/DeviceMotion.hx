@@ -1,54 +1,48 @@
-/*
- * Copyright (c) 2003-2015, GameDuell GmbH
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 package device_motion;
 
+import duellkit.DuellKit;
+import hxjni.JNI;
 import msignal.Signal;
 
 class DeviceMotion
 {
+    private static var initializeNative: Dynamic = null;
+    private static var startNative: Dynamic = null;
+    private static var stopNative: Dynamic = null;
+
+    private static var _instance: DeviceMotion = null;
+
     public var onAccelerometerEvent(default, null): Signal1<AccelerometerData>;
 
-   // private var device_motion_start_accelerometer_input = Lib.load ("device_motion", "device_motion_start_accelerometer_input", 2);
-  //  private var device_motion_stop_accelerometer_input = Lib.load ("device_motion", "device_motion_stop_accelerometer_input", 0);
-
+    private var javaObj: Dynamic;
     private var data: AccelerometerData;
 
-    private static var _instance: DeviceMotion;
-    
+    private var active: Bool;
+    private var wasActive: Bool;
+    private var lastFilterValue: Float;
+    private var lastFrequency: Float;
+
 	private function new(): Void
     {
+        javaObj = initializeNative(this);
         data = null;
+        active = wasActive = false;
+        lastFilterValue = lastFrequency = 0.0;
         onAccelerometerEvent = new Signal1<AccelerometerData>();
+
+        DuellKit.instance().onApplicationWillEnterBackground.add(onWillEnterBackground);
+        DuellKit.instance().onApplicationWillEnterForeground.add(onWillEnterForeground);
     }
 
     static public inline function instance(): DeviceMotion
 	{
 		if (_instance == null)
 		{
+            initializeNative = JNI.createStaticMethod("org/haxe/duell/devicemotion/SensorHandler",
+                    "initialize", "(Lorg/haxe/duell/hxjni/HaxeObject;)Lorg/haxe/duell/devicemotion/SensorHandler;");
+            startNative = JNI.createMemberMethod("org/haxe/duell/devicemotion/SensorHandler", "start", "(F)V");
+            stopNative = JNI.createMemberMethod("org/haxe/duell/devicemotion/SensorHandler", "stop", "()V");
+
 			_instance = new DeviceMotion();
 		}
 
@@ -57,25 +51,49 @@ class DeviceMotion
 
     public function startAccelerometerInput(filterValue: Float = 0.1, frequency: Float = (1.0/60.0)): Void
     {
+        lastFilterValue = filterValue;
+        lastFrequency = frequency;
+
         if (data == null)
         {
             data = new AccelerometerData(filterValue);
         }
 
-        // device_motion_start_accelerometer_input(frequency, onAccelerometerInput);
+        active = true;
+        startNative(javaObj, frequency);
     }
 
     public function stopAccelerometerInput(): Void
     {
-        // device_motion_stop_accelerometer_input();
+        active = false;
+        stopNative(javaObj);
         onAccelerometerEvent.removeAll();
         data = null;
     }
 
+    @:keep
     private function onAccelerometerInput(x: Float, y: Float, z: Float): Void
     {
         data.updateData(x, y, z);
 
         onAccelerometerEvent.dispatch(data);
+    }
+
+    private function onWillEnterBackground()
+    {
+        wasActive = active;
+
+        if (wasActive)
+        {
+            stopAccelerometerInput();
+        }
+    }
+
+    private function onWillEnterForeground()
+    {
+        if (wasActive)
+        {
+            startAccelerometerInput(lastFilterValue, lastFrequency);
+        }
     }
 }
