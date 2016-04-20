@@ -18,6 +18,7 @@ public final class SensorHandler implements SensorEventListener {
 
     private SensorManager sensorManager;
     private Sensor sensor;
+    private final boolean enabled;
 
     public static SensorHandler initialize(final HaxeObject handler)
     {
@@ -29,17 +30,25 @@ public final class SensorHandler implements SensorEventListener {
 
         DuellActivity activity = DuellActivity.getInstance();
         sensorManager = (SensorManager) activity.getSystemService(Context.SENSOR_SERVICE);
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensor = sensorManager != null ? sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) : null;
+
+        enabled = sensor != null;
     }
 
-    public void start(float frequencySeconds)
-    {
+    public void start(float frequencySeconds) {
+        if (!enabled) {
+            return;
+        }
+
         int frequencyUs = (int) Math.floor(frequencySeconds * 1_000_000);
         sensorManager.registerListener(this, sensor, frequencyUs);
     }
 
-    public void stop()
-    {
+    public void stop() {
+        if (!enabled) {
+            return;
+        }
+
         sensorManager.unregisterListener(this);
     }
 
@@ -54,8 +63,7 @@ public final class SensorHandler implements SensorEventListener {
         // what to do lol
     }
 
-    static class Dispatcher implements Runnable
-    {
+    static class Dispatcher implements Runnable {
         private final HaxeObject handler;
         private float[] values;
 
