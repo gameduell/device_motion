@@ -1,22 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <library xmlns="duell">
 
-    <ndll name="device_motion" build-file-path="project/Build.xml" bin-path="ndll" />
-
     <haxelib name="msignal" version="1.2.2" />
 
-    <platform-config>
-        <ios>
-            <framework name="CoreMotion.framework" />
-        </ios>
-    </platform-config>
-
-<!--     
-    <platform-config>
-        <documentation>
-            <documentation-folder library="ios_appdelegate" path="documentation" />
-        </documentation>
-    </platform-config> 
--->
+    <include path="backends/device_motion_ios/duell_library.xml" if="ios" />
+    <include path="backends/device_motion_android/duell_library.xml" if="android" />
+    <include path="backends/device_motion_empty/duell_library.xml" unless="android||ios" />
 
 </library>

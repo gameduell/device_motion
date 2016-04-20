@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<library xmlns="duell">
+
+    <ndll name="device_motion" build-file-path="project/Build.xml" bin-path="ndll" />
+
+    <platform-config>
+        <ios>
+            <framework name="CoreMotion.framework" />
+        </ios>
+    </platform-config>
+
+</library>

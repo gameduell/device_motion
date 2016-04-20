@@ -1,5 +1,5 @@
 tests/Export
-ndll
-project/obj
+backends/device_motion_ios/ndll
+backends/device_motion_ios/project/obj
 .idea/
 *.iml

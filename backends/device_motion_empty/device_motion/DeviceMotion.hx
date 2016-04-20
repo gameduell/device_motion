@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2016, GameDuell GmbH
+ * Copyright (c) 2003-2015, GameDuell GmbH
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,12 +28,30 @@ package device_motion;
 
 import msignal.Signal;
 
-extern class DeviceMotion
+class DeviceMotion
 {
     public var onAccelerometerEvent(default, null): Signal1<AccelerometerData>;
 
-    public static function instance(): DeviceMotion;
+    private static var _instance: DeviceMotion = null;
+    
+	private function new(): Void
+    {
+        onAccelerometerEvent = new Signal1<AccelerometerData>();
+    }
 
-    public function startAccelerometerInput(filterValue: Float = 0.1, frequency: Float = (1.0/60.0)): Void;
-    public function stopAccelerometerInput(): Void;
+    public static inline function instance(): DeviceMotion
+	{
+		if (_instance == null)
+		{
+			_instance = new DeviceMotion();
+		}
+
+		return _instance;
+	}
+
+    public function startAccelerometerInput(_, _)
+    {}
+
+    public function stopAccelerometerInput()
+    {}
 }
