@@ -26,57 +26,14 @@
 
 package device_motion;
 
-import cpp.Lib;
 import msignal.Signal;
 
-
-class DeviceMotion
+extern class DeviceMotion
 {
     public var onAccelerometerEvent(default, null): Signal1<AccelerometerData>;
 
-    private var device_motion_start_accelerometer_input = Lib.load ("device_motion", "device_motion_start_accelerometer_input", 2);
-    private var device_motion_stop_accelerometer_input = Lib.load ("device_motion", "device_motion_stop_accelerometer_input", 0);
+    public static function instance(): DeviceMotion;
 
-    private var data: AccelerometerData = null;
-
-    private static var _instance: DeviceMotion;
-    
-	private function new(): Void
-    {
-        onAccelerometerEvent = new Signal1<AccelerometerData>();
-    }
-
-    static public inline function instance(): DeviceMotion
-	{
-		if (_instance == null)
-		{
-			_instance = new DeviceMotion();
-		}
-
-		return _instance;
-	}
-
-    public function startAccelerometerInput(filterValue: Float = 0.1, frequency: Float = (1.0/60.0)): Void
-    {
-        if (data == null)
-        {
-            data = new AccelerometerData(filterValue);
-        }
-
-        device_motion_start_accelerometer_input(frequency, onAccelerometerInput);
-    }
-
-    public function stopAccelerometerInput(): Void
-    {
-        device_motion_stop_accelerometer_input();
-        onAccelerometerEvent.removeAll();
-        data = null;
-    }
-
-    private function onAccelerometerInput(x: Float, y: Float, z: Float): Void
-    {
-        data.updateData(x, y, z);
-
-        onAccelerometerEvent.dispatch(data);
-    }
+    public function startAccelerometerInput(filterValue: Float = 0.1, frequency: Float = (1.0/60.0)): Void;
+    public function stopAccelerometerInput(): Void;
 }

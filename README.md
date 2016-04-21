@@ -9,6 +9,10 @@ Simply retrieve the singleton ("instance()") and register on the signals provide
 
 ## Release Log
 
+### 2.0.0
+
+Implemented Android backend
+
 ### 1.0.0
 
 Initial release

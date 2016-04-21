@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<library xmlns="duell">
+
+    <platform-config>
+        <android>
+            <java-source name="DEVICE_MOTION" path="java" />
+            <proguard path="proguard.cfg" />
+        </android>
+    </platform-config>
+
+</library>
