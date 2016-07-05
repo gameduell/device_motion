@@ -76,10 +76,13 @@ class DeviceMotion
     @:keep
     private function onAccelerometerInput(x: Float, y: Float, z: Float): Void
     {
-        // values from Android accelerometer come in m/s2, updateData expects values in g-forces
-        data.updateData(x / GRAVITATIONAL_PULL_ON_EARTH, y / GRAVITATIONAL_PULL_ON_EARTH, z / GRAVITATIONAL_PULL_ON_EARTH);
+        if (active)
+        {
+            // values from Android accelerometer come in m/s2, updateData expects values in g-forces
+            data.updateData(x / GRAVITATIONAL_PULL_ON_EARTH, y / GRAVITATIONAL_PULL_ON_EARTH, z / GRAVITATIONAL_PULL_ON_EARTH);
 
-        onAccelerometerEvent.dispatch(data);
+            onAccelerometerEvent.dispatch(data);
+        }
     }
 
     private function onWillEnterBackground()
